@@ -8,4 +8,4 @@
 ### 2. Zeros reais de Equações Reais
 |Trabalho|Descrição|
 |------|------|
-|T03|    |
+|T03|Métodos de zero de função|
