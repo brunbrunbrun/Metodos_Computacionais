@@ -58,10 +58,49 @@ def secante(func, x0, x1, epsilon):
         k += 1
     return k, xk, func(xk)
 
-# Parâmetros das funções, intervalos e precisões
-funcoes = [(func1, '7x^3 - x^2 - 28x + 4'), (func2, '6x^4 - 7x^3 - 33x^2 + 35x + 15')]
-intervalos = [([0, 1], 'Intervalo [0, 1]'), ([-3, -2], 'Intervalo [-3, -2]'), ([-1, 0], 'Intervalo [-1, 0]'), ([1, 2], 'Intervalo [1, 2]'), ([2, 3], 'Intervalo [2, 3]')]
+
+# Primeira função com apenas um intervalo
+funcoes = [(func1, '7x^3 - x^2 - 28x + 4')]
+intervalos = [([0, 1], 'Intervalo [0, 1]')]
 precisoes = [1e-5, 1e-6]
+
+# Execução do programa
+for func, func_nome in funcoes:
+    print(f"Função: {func_nome}\n")
+    for intervalo, intervalo_nome in intervalos:
+        print(f"Intervalo: {intervalo_nome}")
+        for epsilon in precisoes:
+            print(f"\nPrecisão: {epsilon}")
+            print("Metodo\t k\t ak\t\t bk\t\t xk\t\t f(ak)\t\t f(bk)\t\t f(xk)\t\t bk - ak")
+            print("="*121)
+            
+            # Bissecção
+            k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = bissec(func, intervalo[0], intervalo[1], epsilon)
+            print(f"Bissec\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+            
+            # Posição Falsa
+            k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = posicao_falsa(func, intervalo[0], intervalo[1], epsilon)
+            print(f"P_Falsa\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+            
+            # Newton
+            func_primo = lambda x: (func(x + epsilon) - func(x)) / epsilon
+            k, xk, f_xk = newton(func, func_primo, sum(intervalo) / 2, epsilon)
+            print(f"Newton\t {k}\t -\t\t -\t\t {xk:.6f}\t -\t\t -\t\t {f_xk:.6f}\t -")
+            
+            # Secante
+            k, xk, f_xk = secante(func, intervalo[0], intervalo[1], epsilon)
+            print(f"Secante\t {k}\t {intervalo[0]:.6f}\t {intervalo[1]:.6f}\t {xk:.6f}\t {func(intervalo[0]):.6f}\t {func(intervalo[1]):.6f}\t {f_xk:.6f}\t {intervalo[1] - intervalo[0]:.6f}")
+            print("-"*121)
+        print("\n")
+
+    print("="*121)
+    print("\n")
+
+
+# Segunda função com ademais intervalos
+funcoes = [(func2, '6x^4 - 7x^3 - 33x^2 + 35x + 15')]
+intervalos = [([-3, -2], 'Intervalo [-3, -2]'), ([-1, 0], 'Intervalo [-1, 0]'), ([1, 2], 'Intervalo [1, 2]'), ([2, 3], 'Intervalo [2, 3]')]
+precisoes = [1e-7]
 
 # Execução do programa
 for func, func_nome in funcoes:
