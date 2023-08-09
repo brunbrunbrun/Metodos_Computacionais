@@ -23,19 +23,30 @@ def bissec(func, a, b, epsilon):
     return k, ak, bk, xk, func(ak), func(bk), func(xk), bk - ak
 
 # Método da Posição Falsa
-def posicao_falsa(func, a, b, epsilon):
+def posicao_falsa(func, a, b, epsilon, iteracoes_maximas=1000):
     ak = a
     bk = b
-    xk = ak - (func(ak) * (bk - ak)) / (func(bk) - func(ak))
-    k = 0
-    while abs(bk - ak) > epsilon:
-        xk = ak - (func(ak) * (bk - ak)) / (func(bk) - func(ak))
-        if func(xk) * func(ak) < 0:
+    f_ak = func(ak)
+    f_bk = func(bk)
+    
+    if f_ak * f_bk >= 0:
+        raise ValueError("Intervalo não contem uma raiz")
+
+    for k in range(1, iteracoes_maximas + 1):
+        xk = ak - (f_ak * (bk - ak)) / (f_bk - f_ak)
+        f_xk = func(xk)
+        
+        if abs(f_xk) < epsilon:
+            return k, ak, bk, xk, f_ak, f_bk, f_xk, bk - ak
+        
+        if f_xk * f_ak < 0:
             bk = xk
+            f_bk = f_xk
         else:
             ak = xk
-        k += 1
-    return k, ak, bk, xk, func(ak), func(bk), func(xk), bk - ak
+            f_ak = f_xk
+    
+    raise ValueError("Numero maximo de iterações alcançado")
 
 # Método de Newton
 def newton(func, func_primo, x0, epsilon):
@@ -77,10 +88,13 @@ for func, func_nome in funcoes:
             # Bissecção
             k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = bissec(func, intervalo[0], intervalo[1], epsilon)
             print(f"Bissec\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
-            
-            # Posição Falsa
-            k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = posicao_falsa(func, intervalo[0], intervalo[1], epsilon)
-            print(f"P_Falsa\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+
+            # Posição Falsa            
+            try:
+                k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = posicao_falsa(func, intervalo[0], intervalo[1], epsilon)
+                print(f"P_Falsa\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+            except ValueError as e:
+                print(f"P_Falsa\t -\t -\t -\t -\t -\t -\t {e}\t -")
             
             # Newton
             func_primo = lambda x: (func(x + epsilon) - func(x)) / epsilon
@@ -116,9 +130,12 @@ for func, func_nome in funcoes:
             k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = bissec(func, intervalo[0], intervalo[1], epsilon)
             print(f"Bissec\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
             
-            # Posição Falsa
-            k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = posicao_falsa(func, intervalo[0], intervalo[1], epsilon)
-            print(f"P_Falsa\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+            # Posição Falsa            
+            try:
+                k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = posicao_falsa(func, intervalo[0], intervalo[1], epsilon)
+                print(f"P_Falsa\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+            except ValueError as e:
+                print(f"P_Falsa\t -\t -\t -\t -\t -\t -\t {e}\t -")
             
             # Newton
             func_primo = lambda x: (func(x + epsilon) - func(x)) / epsilon
@@ -133,6 +150,7 @@ for func, func_nome in funcoes:
 
     print("="*121)
     print("\n")
+
 
 '''
 x_escolhido = 0.75
