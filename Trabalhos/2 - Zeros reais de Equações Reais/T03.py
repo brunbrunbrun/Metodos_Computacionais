@@ -73,7 +73,7 @@ def secante(func, x0, x1, epsilon):
 # Primeira função com apenas um intervalo
 funcoes = [(func1, '7x^3 - x^2 - 28x + 4')]
 intervalos = [([0, 1], 'Intervalo [0, 1]')]
-precisoes = [1e-5, 1e-6]
+precisoes = [1e-5]
 
 # Execução do programa
 for func, func_nome in funcoes:
@@ -81,18 +81,25 @@ for func, func_nome in funcoes:
     for intervalo, intervalo_nome in intervalos:
         print(f"Intervalo: {intervalo_nome}")
         for epsilon in precisoes:
+            x_escolhido = 0         
             print(f"\nPrecisão: {epsilon}")
             print("Metodo\t k\t ak\t\t bk\t\t xk\t\t f(ak)\t\t f(bk)\t\t f(xk)\t\t bk - ak")
             print("="*121)
             
             # Bissecção
             k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = bissec(func, intervalo[0], intervalo[1], epsilon)
-            print(f"Bissec\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+            print(f"Bissec\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")            
+            # Pegar o X se o f(xk) for 0, ou seja o maximo de precisão
+            if(f_xk < 0.0000001 and f_xk > -0.0000001):
+                x_escolhido = xk
 
             # Posição Falsa            
             try:
                 k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = posicao_falsa(func, intervalo[0], intervalo[1], epsilon)
                 print(f"P_Falsa\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+                # Pegar o X se o f(xk) for 0, ou seja o maximo de precisão
+                if(f_xk < 0.0000001 and f_xk > -0.0000001):
+                    x_escolhido = xk                   
             except ValueError as e:
                 print(f"P_Falsa\t -\t -\t -\t -\t -\t -\t {e}\t -")
             
@@ -100,11 +107,18 @@ for func, func_nome in funcoes:
             func_primo = lambda x: (func(x + epsilon) - func(x)) / epsilon
             k, xk, f_xk = newton(func, func_primo, sum(intervalo) / 2, epsilon)
             print(f"Newton\t {k}\t -\t\t -\t\t {xk:.6f}\t -\t\t -\t\t {f_xk:.6f}\t -")
+            # Pegar o X se o f(xk) for 0, ou seja o maximo de precisão
+            if(f_xk < 0.0000001 and f_xk > -0.0000001):
+                x_escolhido = xk
             
             # Secante
             k, xk, f_xk = secante(func, intervalo[0], intervalo[1], epsilon)
             print(f"Secante\t {k}\t {intervalo[0]:.6f}\t {intervalo[1]:.6f}\t {xk:.6f}\t {func(intervalo[0]):.6f}\t {func(intervalo[1]):.6f}\t {f_xk:.6f}\t {intervalo[1] - intervalo[0]:.6f}")
+            # Pegar o X se o f(xk) for 0, ou seja o maximo de precisão
+            if(f_xk < 0.0000001 and f_xk > -0.0000001):
+                x_escolhido = xk
             print("-"*121)
+            print(f"\t\t\t\t\tX escolhido: {x_escolhido:.6f}")
         print("\n")
 
     print("="*121)
@@ -122,6 +136,7 @@ for func, func_nome in funcoes:
     for intervalo, intervalo_nome in intervalos:
         print(f"Intervalo: {intervalo_nome}")
         for epsilon in precisoes:
+            x_escolhido = 0 
             print(f"\nPrecisão: {epsilon}")
             print("Metodo\t k\t ak\t\t bk\t\t xk\t\t f(ak)\t\t f(bk)\t\t f(xk)\t\t bk - ak")
             print("="*121)
@@ -129,11 +144,17 @@ for func, func_nome in funcoes:
             # Bissecção
             k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = bissec(func, intervalo[0], intervalo[1], epsilon)
             print(f"Bissec\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
-            
+            # Pegar o X se o f(xk) for 0, ou seja o maximo de precisão
+            if(f_xk < 0.0000001 and f_xk > -0.0000001):
+                x_escolhido = xk
+
             # Posição Falsa            
             try:
                 k, ak, bk, xk, f_ak, f_bk, f_xk, bk_ak = posicao_falsa(func, intervalo[0], intervalo[1], epsilon)
                 print(f"P_Falsa\t {k}\t {ak:.6f}\t {bk:.6f}\t {xk:.6f}\t {f_ak:.6f}\t {f_bk:.6f}\t {f_xk:.6f}\t {bk_ak:.6f}")
+                # Pegar o X se o f(xk) for 0, ou seja o maximo de precisão
+                if(f_xk < 0.0000001 and f_xk > -0.0000001):
+                    x_escolhido = xk
             except ValueError as e:
                 print(f"P_Falsa\t -\t -\t -\t -\t -\t -\t {e}\t -")
             
@@ -141,11 +162,18 @@ for func, func_nome in funcoes:
             func_primo = lambda x: (func(x + epsilon) - func(x)) / epsilon
             k, xk, f_xk = newton(func, func_primo, sum(intervalo) / 2, epsilon)
             print(f"Newton\t {k}\t -\t\t -\t\t {xk:.6f}\t -\t\t -\t\t {f_xk:.6f}\t -")
-            
+            # Pegar o X se o f(xk) for 0, ou seja o maximo de precisão
+            if(f_xk < 0.0000001 and f_xk > -0.0000001):
+                x_escolhido = xk
+
             # Secante
             k, xk, f_xk = secante(func, intervalo[0], intervalo[1], epsilon)
             print(f"Secante\t {k}\t {intervalo[0]:.6f}\t {intervalo[1]:.6f}\t {xk:.6f}\t {func(intervalo[0]):.6f}\t {func(intervalo[1]):.6f}\t {f_xk:.6f}\t {intervalo[1] - intervalo[0]:.6f}")
+            # Pegar o X se o f(xk) for 0, ou seja o maximo de precisão
+            if(f_xk < 0.0000001 and f_xk > -0.0000001):
+                x_escolhido = xk
             print("-"*121)
+            print(f"\t\t\t\t\tX escolhido: {x_escolhido:.6f}")
         print("\n")
 
     print("="*121)
